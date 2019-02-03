@@ -7,7 +7,7 @@ import os
 
 class LibodbConan(ConanFile):
     name = "libodb"
-    version = "2.5.0-b.9"
+    version = "v2.5.0-b.9"
     description = "libodb for conan, only for personal use"
     # topics can get used for searches, GitHub topics, Bintray tags etc. Add here keywords about the library
     topics = ("conan", "libodb", "logging")
@@ -23,7 +23,7 @@ class LibodbConan(ConanFile):
     default_options = {"shared": False, "fPIC": True}
 
     # Custom attributes for Bincrafters recipe conventions
-    _source_subfolder = "src"
+    _source_subfolder = "libodb"
     _build_subfolder = "build"
     _dist_subfolder = 'dist'
 
@@ -32,13 +32,11 @@ class LibodbConan(ConanFile):
             del self.options.fPIC
 
     def source(self):
-        source_url = "https://pkg.cppget.org/1/beta/odb/libodb"
-        tools.get("{}-{}.tar.gz".format(source_url, self.version),
-                  sha256="5c6498c41897ef770ed523363d761e9acd1cee577920923a6fd61e39a45671be")
-        extracted_dir = self.name + "-" + self.version
-
-        # Rename to "source_subfolder" is a convention to simplify later steps
-        os.rename(extracted_dir, self._source_subfolder)
+        source_url = "https://git.codesynthesis.com/odb/libodb.git"
+        self.run("git clone {}".format(source_url))
+        # You can also change branch, commit or whatever
+        self.run(
+            "cd libodb && git checkout tags/{} -b {}".format(self.version, self.version))
 
     def _configure(self):
         with tools.chdir("{}".format('..')):
@@ -57,7 +55,7 @@ class LibodbConan(ConanFile):
         self.copy(pattern="*.dll", dst="bin", keep_path=False)
         self.copy(pattern="*.lib", dst="lib", keep_path=False)
         self.copy(pattern="*.a", dst="lib", keep_path=False)
-        self.copy(pattern="*.so*", dst="lib", keep_path=False)
+        self.copy(pattern="*.so", dst="lib", keep_path=False)
         self.copy(pattern="*.dylib", dst="lib", keep_path=False)
 
     def package_info(self):

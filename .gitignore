@@ -44,3 +44,7 @@ tmp/
 .ropeproject/*
 ## emacs
 *~
+
+build2/
+libodb/
+dist/
